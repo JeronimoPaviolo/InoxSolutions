@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel Interno | InoxSolutions</title>
+  <style>
+    :root {
+      --bg: #f1f5f9;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --accent: #2563eb;
+      --border: #cbd5e1;
+      --radius: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+    }
+
+    .badge {
+      background: #e0e7ff;
+      color: #3730a3;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: var(--radius);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      border: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+
+    .card h2 {
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+      color: #334155;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.95rem;
+    }
+
+    .btn {
+      width: 100%;
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background: #1d4ed8;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+
+    th {
+      background-color: #f8fafc;
+      color: #64748b;
+      font-weight: 600;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+
+    .status-pendientes { background: #fef3c7; color: #92400e; }
+    .status-contactado { background: #dcfce7; color: #166534; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>Panel de Control Interno</h1>
+      <span class="badge">InoxSolutions Admin</span>
+    </header>
+
+    <div class="grid">
+      <!-- Ajuste de Precios -->
+      <div>
+        <div class="card">
+          <h2>Configuración de Precios</h2>
+          <form id="precios-form">
+            <div class="form-group">
+              <label for="p-varilla">Baranda Varilla ($/m)</label>
+              <input type="number" id="p-varilla" value="150">
+            </div>
+            <div class="form-group">
+              <label for="p-vidrio">Baranda Vidrio ($/m)</label>
+              <input type="number" id="p-vidrio" value="220">
+            </div>
+            <div class="form-group">
+              <label for="p-pasamanos">Pasamanos ($/m)</label>
+              <input type="number" id="p-pasamanos" value="80">
+            </div>
+            <button type="submit" class="btn">Actualizar Precios</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Solicitudes Recibidas -->
+      <div>
+        <div class="card">
+          <h2>Últimas Cotizaciones Recibidas</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Cliente</th>
+                <th>Tipo</th>
+                <th>Metros</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Juan Pérez<br><small style="color:#64748b;">+54 9 353 123456</small></td>
+                <td>Baranda Vidrio</td>
+                <td>5.5m</td>
+                <td><span class="status status-pendientes">Pendiente</span></td>
+              </tr>
+              <tr>
+                <td>María Gómez<br><small style="color:#64748b;">+54 9 353 987654</small></td>
+                <td>Pasamanos</td>
+                <td>3.0m</td>
+                <td><span class="status status-contactado">Contactado</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('precios-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert('¡Precios actualizados con éxito!');
+    });
+  </script>
+</body>
+</html>
