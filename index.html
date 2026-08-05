@@ -1,202 +1,278 @@
-<!DOCTYPE html>  
-<html lang="es">  
-<head>  
-  <meta charset="UTF-8">  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">  
-  <title>Cotizador | Acero Inoxidable</title>  
-  <style>  
-    :root {  
-      --bg: #f8f9fa;  
-      --card-bg: #ffffff;  
-      --text: #1a1a1a;  
-      --accent: #4a5568;  
-      --border: #e2e8f0;  
-      --radius: 8px;  
-    }  
-  
-    body {  
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;  
-      background-color: var(--bg);  
-      color: var(--text);  
-      display: flex;  
-      justify-content: center;  
-      padding: 40px 20px;  
-      margin: 0;  
-    }  
-  
-    .container {  
-      width: 100%;  
-      max-width: 480px;  
-      background: var(--card-bg);  
-      padding: 32px;  
-      border-radius: var(--radius);  
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);  
-      border: 1px solid var(--border);  
-    }  
-  
-    h1 {  
-      font-size: 1.5rem;  
-      font-weight: 600;  
-      letter-spacing: -0.5px;  
-      margin-bottom: 8px;  
-    }  
-  
-    p.subtitle {  
-      color: #666;  
-      font-size: 0.9rem;  
-      margin-bottom: 24px;  
-    }  
-  
-    .form-group {  
-      margin-bottom: 20px;  
-    }  
-  
-    label {  
-      display: block;  
-      font-size: 0.85rem;  
-      font-weight: 600;  
-      margin-bottom: 6px;  
-      text-transform: uppercase;  
-      letter-spacing: 0.5px;  
-    }  
-  
-    select, input {  
-      width: 100%;  
-      padding: 12px;  
-      border: 1px solid var(--border);  
-      border-radius: var(--radius);  
-      font-size: 1rem;  
-      box-sizing: border-box;  
-      outline: none;  
-      transition: border-color 0.2s;  
-    }  
-  
-    select:focus, input:focus {  
-      border-color: var(--accent);  
-    }  
-  
-    .grid-2 {  
-      display: grid;  
-      grid-template-columns: 1fr 1fr;  
-      gap: 12px;  
-    }  
-  
-    .result-box {  
-      margin-top: 28px;  
-      padding: 20px;  
-      background: #f1f5f9;  
-      border-radius: var(--radius);  
-      text-align: center;  
-    }  
-  
-    .result-box span {  
-      display: block;  
-      font-size: 0.85rem;  
-      color: #64748b;  
-    }  
-  
-    .price {  
-      font-size: 2rem;  
-      font-weight: 700;  
-      color: var(--text);  
-      margin-top: 4px;  
-    }  
-  
-    .btn-whatsapp {  
-      display: block;  
-      width: 100%;  
-      padding: 14px;  
-      margin-top: 16px;  
-      background-color: #000;  
-      color: #fff;  
-      text-align: center;  
-      text-decoration: none;  
-      border-radius: var(--radius);  
-      font-weight: 600;  
-      box-sizing: border-box;  
-      transition: opacity 0.2s;  
-    }  
-  
-    .btn-whatsapp:hover {  
-      opacity: 0.85;  
-    }  
-  </style>  
-</head>  
-<body>  
-  
-<div class="container">  
-  <h1>Cotizador de Acero</h1>  
-  <p class="subtitle">Calcula el presupuesto estimado para tu proyecto a medida.</p>  
-  
-  <div class="form-group">  
-    <label for="tipo">Tipo de Trabajo</label>  
-    <select id="tipo" onchange="calcular()">  
-      <option value="parrilla">Parrilla a medida</option>  
-      <option value="mesada">Mesada industrial</option>  
-      <option value="baranda">Baranda / Pasamanos</option>  
-    </select>  
-  </div>  
-  
-  <div class="form-group grid-2">  
-    <div>  
-      <label for="ancho">Ancho (cm)</label>  
-      <input type="number" id="ancho" value="80" oninput="calcular()">  
-    </div>  
-    <div>  
-      <label for="largo">Largo / Prof. (cm)</label>  
-      <input type="number" id="largo" value="50" oninput="calcular()">  
-    </div>  
-  </div>  
-  
-  <div class="form-group">  
-    <label for="calidad">Calidad del Acero</label>  
-    <select id="calidad" onchange="calcular()">  
-      <option value="1">AISI 430 (Uso estándar interior)</option>  
-      <option value="1.3">AISI 304 (Alta resistencia / Exterior)</option>  
-    </select>  
-  </div>  
-  
-  <div class="result-box">  
-    <span>Estimado aproximado</span>  
-    <div class="price" id="precio">$0</div>  
-  </div>  
-  
-  <a id="btn-ws" href="#" target="_blank" class="btn-whatsapp">Solicitar Confirmación por WhatsApp</a>  
-</div>  
-  
-<script>  
-  // Tarifas base por cm2 según tipo de trabajo  
-  const preciosBase = {  
-    parrilla: 0.8,  
-    mesada: 0.6,  
-    baranda: 0.4  
-  };  
-  
-  const miTelefonoWhatsApp = "5491112345678"; // Reemplaza con tu número (código de país + área + número)  
-  
-  function calcular() {  
-    const tipo = document.getElementById('tipo').value;  
-    const ancho = parseFloat(document.getElementById('ancho').value) || 0;  
-    const largo = parseFloat(document.getElementById('largo').value) || 0;  
-    const multiplicadorCalidad = parseFloat(document.getElementById('calidad').value);  
-  
-    const area = ancho * largo;  
-    const total = Math.round(area * preciosBase[tipo] * multiplicadorCalidad);  
-  
-    // Formatear precio  
-    document.getElementById('precio').innerText = `$ ${total.toLocaleString('es-AR')}`;  
-  
-    // Crear mensaje predefinido para WhatsApp  
-    const textoWhatsApp = encodeURIComponent(  
-      `¡Hola! Hice una cotización en la web para una *${tipo}* de *${ancho}x${largo} cm*. El estimado fue de *$${total.toLocaleString('es-AR')}*. Me gustaría coordinar detalles.`  
-    );  
-      
-    document.getElementById('btn-ws').href = `https://wa.me/${miTelefonoWhatsApp}?text=${textoWhatsApp}`;  
-  }  
-  
-  // Inicializar cálculo al cargar  
-  calcular();  
-</script>  
-  
-</body>  
-</html>  
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Administración | InoxSolutions</title>
+  <style>
+    :root {
+      --bg: #f1f5f9;
+      --card-bg: #ffffff;
+      --text: #0f172a;
+      --accent: #0f172a;
+      --border: #e2e8f0;
+      --radius: 10px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 24px;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card-bg);
+      padding: 20px 28px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .top-bar h1 {
+      margin: 0;
+      font-size: 1.4rem;
+      font-weight: 800;
+    }
+
+    .top-bar a {
+      color: #64748b;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .top-bar a:hover { color: var(--text); }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      padding: 24px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+    }
+
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.1rem;
+      font-weight: 700;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #f8fafc;
+      margin-bottom: 18px;
+    }
+
+    .form-control {
+      margin-bottom: 12px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--accent);
+    }
+
+    button.btn-add {
+      width: 100%;
+      padding: 10px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button.btn-add:hover {
+      opacity: 0.9;
+    }
+
+    ul.data-list {
+      list-style: none;
+      padding: 0;
+      margin: 18px 0 0 0;
+    }
+
+    ul.data-list li {
+      padding: 10px;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 0.88rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    ul.data-list li:last-child { border-bottom: none; }
+
+    .tag {
+      background: #e2e8f0;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .btn-del {
+      background: #ef4444;
+      color: white;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.75rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="top-bar">
+  <h1>⚙️ Panel de Gestión Interna</h1>
+  <a href="index.html">← Volver al Cotizador Público</a>
+</div>
+
+<div class="grid">
+
+  <!-- 1. REGISTRO DE CLIENTES -->
+  <div class="card">
+    <h2>📋 Registro de Clientes</h2>
+    <div class="form-control">
+      <input type="text" id="cli-nombre" placeholder="Nombre completo">
+    </div>
+    <div class="form-control">
+      <input type="text" id="cli-trabajo" placeholder="Trabajo (Ej. Parrilla 90x60 AISI 304)">
+    </div>
+    <div class="form-control">
+      <input type="number" id="cli-monto" placeholder="Monto Acordado ($)">
+    </div>
+    <button class="btn-add" onclick="agregarCliente()">Guardar Cliente</button>
+
+    <ul class="data-list" id="lista-clientes"></ul>
+  </div>
+
+  <!-- 2. CONTROL DE COSTOS DE INSUMOS -->
+  <div class="card">
+    <h2>💰 Costos e Insumos</h2>
+    <div class="form-control">
+      <input type="text" id="costo-item" placeholder="Insumo (Ej. Caño 40x40 / Chapa 1.2mm)">
+    </div>
+    <div class="form-control">
+      <input type="number" id="costo-valor" placeholder="Precio ($ por m² / metro / unidad)">
+    </div>
+    <button class="btn-add" onclick="agregarCosto()">Registrar Costo</button>
+
+    <ul class="data-list" id="lista-costos"></ul>
+  </div>
+
+  <!-- 3. PANEL DE PROVEEDORES -->
+  <div class="card">
+    <h2>🏭 Lista de Proveedores</h2>
+    <div class="form-control">
+      <input type="text" id="prov-nombre" placeholder="Nombre de la Empresa / Proveedor">
+    </div>
+    <div class="form-control">
+      <input type="text" id="prov-rubro" placeholder="Rubro (Ej. Chapas, Perfiles, Pulido)">
+    </div>
+    <div class="form-control">
+      <input type="text" id="prov-contacto" placeholder="Teléfono / Correo">
+    </div>
+    <button class="btn-add" onclick="agregarProveedor()">Guardar Proveedor</button>
+
+    <ul class="data-list" id="lista-proveedores"></ul>
+  </div>
+
+</div>
+
+<script>
+  let clientes = JSON.parse(localStorage.getItem('inox_clientes')) || [];
+  let costos = JSON.parse(localStorage.getItem('inox_costos')) || [];
+  let proveedores = JSON.parse(localStorage.getItem('inox_proveedores')) || [];
+
+  function guardarYRenderizar() {
+    localStorage.setItem('inox_clientes', JSON.stringify(clientes));
+    localStorage.setItem('inox_costos', JSON.stringify(costos));
+    localStorage.setItem('inox_proveedores', JSON.stringify(proveedores));
+
+    document.getElementById('lista-clientes').innerHTML = clientes.map((c, i) => `
+      <li>
+        <div><strong>${c.nombre}</strong><br><small style="color:#64748b;">${c.trabajo}</small></div>
+        <div><span class="tag">$${Number(c.monto).toLocaleString('es-AR')}</span> <button class="btn-del" onclick="eliminarCliente(${i})">✕</button></div>
+      </li>
+    `).join('');
+
+    document.getElementById('lista-costos').innerHTML = costos.map((c, i) => `
+      <li>
+        <span>${c.item}</span>
+        <div><span class="tag">$${Number(c.valor).toLocaleString('es-AR')}</span> <button class="btn-del" onclick="eliminarCosto(${i})">✕</button></div>
+      </li>
+    `).join('');
+
+    document.getElementById('lista-proveedores').innerHTML = proveedores.map((p, i) => `
+      <li>
+        <div><strong>${p.nombre}</strong> <span class="tag">${p.rubro}</span><br><small style="color:#64748b;">${p.contacto}</small></div>
+        <button class="btn-del" onclick="eliminarProveedor(${i})">✕</button>
+      </li>
+    `).join('');
+  }
+
+  function agregarCliente() {
+    const nombre = document.getElementById('cli-nombre').value;
+    const trabajo = document.getElementById('cli-trabajo').value;
+    const monto = document.getElementById('cli-monto').value;
+    if(nombre && trabajo && monto) {
+      clientes.push({nombre, trabajo, monto});
+      document.getElementById('cli-nombre').value = ''; document.getElementById('cli-trabajo').value = ''; document.getElementById('cli-monto').value = '';
+      guardarYRenderizar();
+    }
+  }
+
+  function eliminarCliente(i) { clientes.splice(i, 1); guardarYRenderizar(); }
+
+  function agregarCosto() {
+    const item = document.getElementById('costo-item').value;
+    const valor = document.getElementById('costo-valor').value;
+    if(item && valor) {
+      costos.push({item, valor});
+      document.getElementById('costo-item').value = ''; document.getElementById('costo-valor').value = '';
+      guardarYRenderizar();
+    }
+  }
+
+  function eliminarCosto(i) { costos.splice(i, 1); guardarYRenderizar(); }
+
+  function agregarProveedor() {
+    const nombre = document.getElementById('prov-nombre').value;
+    const rubro = document.getElementById('prov-rubro').value;
+    const contacto = document.getElementById('prov-contacto').value;
+    if(nombre && rubro) {
+      proveedores.push({nombre, rubro, contacto});
+      document.getElementById('prov-nombre').value = ''; document.getElementById('prov-rubro').value = ''; document.getElementById('prov-contacto').value = '';
+      guardarYRenderizar();
+    }
+  }
+
+  function eliminarProveedor(i) { proveedores.splice(i, 1); guardarYRenderizar(); }
+
+  guardarYRenderizar();
+</script>
+
+</body>
+</html>
